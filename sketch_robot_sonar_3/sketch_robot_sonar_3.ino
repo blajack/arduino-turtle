@@ -12,8 +12,13 @@ int Echo = 13;
 int LED = 13; 
 
 int MAXspeed = 120; // Максимальная скорость робота
+int TURNspeed = 150;
+int TURNangle = 300; // время поворота, хорошо бы пересчитать в градусы, когда будут датчики положения или скорости.
 int i;
 int t;
+
+unsigned int impulseTime=0; // Для сонара
+unsigned int distance_sm=0; 
 
 void setup()
 {
@@ -32,15 +37,14 @@ void setup()
   pinMode(Echo, INPUT); 
 }
 
-unsigned int impulseTime=0; 
-unsigned int distance_sm=0; 
+
 
 void loop()
 {
 
 int pos = dist ();
 
-if (pos>18)
+if (pos>20)
   {
     robo_forth ();
     delay(100);
@@ -53,7 +57,6 @@ if (pos>18)
     
     robo_turn ();
     robo_stop ();
-    //robo_turn ();
     delay(500);
   }
   
@@ -78,32 +81,28 @@ if (pos>18)
     digitalWrite (IN3, HIGH);
     digitalWrite (IN4, LOW); 
     
-   // for (i = 50; i <= 150; ++i) // увеличение скорости
-   // {
-     i = MAXspeed;
-        analogWrite(EN1, i);
-        analogWrite(EN2, i*1.01);
-        delay(50);
-   // }
+    analogWrite(EN1, MAXspeed);
+    analogWrite(EN2, MAXspeed*1.01);
+    delay(50);
+   
   }
 
 //TURN
   int robo_turn () {
-   // настройки для кругом
+    // настройки для кругом
     digitalWrite (IN2, HIGH); 
     digitalWrite (IN1, LOW);
    
     digitalWrite (IN4, HIGH);
     digitalWrite (IN3, LOW); 
     
-    //for (i = 50; i <= 150; ++i) // увеличение скорости
-    //{
-      i = 150;//MAXspeed;
-        analogWrite(EN1, i);
-        analogWrite(EN2, i*1.01); // 1.01 - поправочный коэф. для прямой езды
-     //   delay(1);
-    //}
-    delay(300); // здесь регулировать угол поворота.
+    // пусть крутится пока <30см
+    int pos = dist ();
+    while(pos < 30){
+      analogWrite(EN1, TURNspeed);
+      analogWrite(EN2, TURNspeed); 
+      delay(TURNangle); // здесь регулировать время поворота.
+    }
   }
 
 //BACK
@@ -115,13 +114,10 @@ if (pos>18)
     digitalWrite (IN4, HIGH);
     digitalWrite (IN3, LOW); 
     
-    //for (i = 50; i <= 200; ++i) // увеличение скорости
-    //{
-      i = MAXspeed;
-        analogWrite(EN1, i);
-        analogWrite(EN2, i);
-        delay(250);
-    //}
+    analogWrite(EN1, MAXspeed);
+    analogWrite(EN2, MAXspeed);
+    delay(250);
+    
   }
 
 
