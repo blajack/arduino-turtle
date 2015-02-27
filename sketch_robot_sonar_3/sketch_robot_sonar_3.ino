@@ -44,7 +44,7 @@ void loop()
 
 int pos = dist ();
 
-if (pos>20)
+if (pos>15)
   {
     robo_forth ();
     delay(100);
